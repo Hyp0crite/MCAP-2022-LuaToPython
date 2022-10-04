@@ -315,6 +315,26 @@ class CCWebDisplay(BasePeripheral):
         return self._method('setResolution', res_x, res_y).take_bool()
 
 
+class CCNBTObserver(BasePeripheral):
+    def readState(self) -> Dict[str, str]:
+        return self._method('readState').take_dict()
+
+    def hasState(self, arg: bytes):
+        return self._method('hasState', arg).take_bool()
+
+    def writeState(self, state):
+        return self._method('writeState', state)
+
+    def readNBT(self) -> str:
+        return self._method('readNBT').take_string()
+
+    def hasNBT(self, nbtKey: str):
+        return self._method('hasNBT', nbtKey.encode('utf-8')).take_bool()
+
+    def writeNBT(self, nbt: str):
+        return self._method('writeNBT', nbt.encode('utf-8'))
+
+
 TYPE_MAP = {}
 
 
@@ -382,6 +402,7 @@ registerType('speaker', CCSpeaker)
 registerType('command', CCCommandBlock)
 registerType('workbench', CCWorkbench)
 registerType('webdisplays', CCWebDisplay)
+registerType('NBT_Observer', CCNBTObserver)
 
 for k in [
     'chest',
