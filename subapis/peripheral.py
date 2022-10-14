@@ -334,6 +334,13 @@ class CCNBTObserver(BasePeripheral):
         return self._method('writeNBT', nbt.encode('utf-8'))
 
 
+class CC3dProjector(BasePeripheral):
+    def write(self, model: list):
+        return self._method('write', model)
+
+    def clear(self):
+        return self._method('clear')
+
 TYPE_MAP = {}
 
 
@@ -402,6 +409,7 @@ registerType('command', CCCommandBlock)
 registerType('workbench', CCWorkbench)
 registerType('webdisplays', CCWebDisplay)
 registerType('NBT_Observer', CCNBTObserver)
+registerType('3d_projector', CC3dProjector)
 
 for k in [
     'chest',
