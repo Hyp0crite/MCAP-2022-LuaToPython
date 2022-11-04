@@ -3,7 +3,7 @@ from typing import Dict, Optional, List, Tuple, Type, Any, Union
 
 from .mixins import TermMixin, TermTarget
 from .. import ser
-from ..lua import LuaNum, lua_string
+from ..lua import LuaNum, LuaTable, lua_string
 from ..sess import eval_lua, eval_lua_method_factory
 
 
@@ -294,7 +294,7 @@ class CCWebDisplay(BasePeripheral):
     def getScreenPos(self) -> Tuple[int, int, int]:
         rp = self._method('getScreenPos')
         return tuple(rp.take_int() for _ in range(3))
-        
+
     def type(self, txt: str):
         return self._method('type', txt).take_bool()
 
@@ -341,11 +341,34 @@ class CC3dProjector(BasePeripheral):
     def clear(self):
         return self._method('clear')
 
+
+class CCManipulator(BasePeripheral):
+
+    def getBlockMeta(self, x: int, y: int, z: int):
+        return self._method('getBlockMeta', x, y, z).take_dict()
+
+    def sense(self):
+        return self._method('sense').take_list()
+
+    def getMetaByID(self, id: bytes):
+        return self._method('getMetaByID', id).take_dict()
+
+    def capture(self, pattern: str):
+        return self._method('capture', pattern.encode('utf-8'))
+
+    def clearCaptures(self):
+        return self._method('clearCaptures')
+
+    def say(self, message: str):
+        return self._method('say', message.encode('utf-8'))
+
+    def uncapture(self, pattern: str):
+        return self._method('uncapture', pattern.encode('utf-8'))
+
+
 TYPE_MAP = {}
 
-
 method = eval_lua_method_factory('peripheral.')
-
 
 __all__ = (
     'BasePeripheral',  # exposed for subclassing & registerType
@@ -410,6 +433,7 @@ registerType('workbench', CCWorkbench)
 registerType('webdisplays', CCWebDisplay)
 registerType('NBT_Observer', CCNBTObserver)
 registerType('3d_projector', CC3dProjector)
+registerType('manipulator', CCManipulator)
 
 for k in [
     'chest',
